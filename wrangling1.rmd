@@ -1,7 +1,12 @@
 ---
 title: "Curating the data"
 output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
+
+# All of my work will be below these instructions
 
 ```{r}
 library(gutenbergr)
@@ -15,29 +20,31 @@ library(ggforce)
 library(forcats)
 ```
 
-I am marking this as do not eval so it doesn't redownload 
-each time. I can save a working copy of the data and use that
-when experimenting,  though still with the ability to run the whole
-process. To load the saved dataset I can use the `load()` function.
+I am marking this as do not eval so it doesn't redownload each time. I
+can save a working copy of the data and use that when experimenting,
+though still with the ability to run the whole process. To load the
+saved dataset I can use the `load()` function.
 
 ```{r eval = FALSE}
 
-quakersaints <-  gutenberg_download(c(19605))
-save(quakersaints, file="data/quakersaints.rda")
+
+thegrey <-  gutenberg_download(c(6746))
+save(thegrey, file="thegrey.rda")
 ```
+
 ```{r eval=FALSE}
-load("quakersaints.rda")
+load("thegrey.rda")
 ```
 
-Previously, we dove straight into tokenizing. But this time let's 
-first think about how we could solve some issues. 
+Previously, we dove straight into tokenizing. But this time let's first
+think about how we could solve some issues.
 
-Looking specifically at this book, I notice first that there are the 
-standard Project Gutenberg texts at the beginning, followed by an 
+Looking specifically at this book, I notice first that there are the
+standard Project Gutenberg texts at the beginning, followed by an
 preface which ends on line 182.
 
-Then from 192 to 260 there is a table of contents with any blank lines. 
-Also * in the title indicates "for younger children." 
+Then from 192 to 260 there is a table of contents with any blank lines.
+Also \* in the title indicates "for younger children."
 
 I would like to separate each of the stories
 
@@ -51,14 +58,12 @@ table_of_contents <- table_of_contents |> filter(text != "")
 table_of_contents$text
 ```
 
-What do you notice about the table of contents? 
-I see at least 3 issues.
+What do you notice about the table of contents? I see at least 3 issues.
 
 ```{r}
 table_of_contents <- table_of_contents |>
                      mutate(younger = substr(text, 1, 1) == "*")
 ```
-
 
 ```{r}
 # Remove numbers (could also use "[0-9]+")
@@ -76,32 +81,29 @@ table_of_contents <- table_of_contents |>
 table_of_contents$text
 ```
 
-Notice that without the last step there is a lot of "white space" around the titles.  I
-assume that these are " " values rather than tabs or other white 
-space characters.  However if that turns out to be wrong I will use
+Notice that without the last step there is a lot of "white space" around
+the titles. I assume that these are " " values rather than tabs or other
+white space characters. However if that turns out to be wrong I will use
 one of the functions from stringr to get rid of them.
 
-All of the above mutates could be combined into one `mutate()` to be more
-efficient. They are separate to illustrate the step by step process.
+All of the above mutates could be combined into one `mutate()` to be
+more efficient. They are separate to illustrate the step by step
+process.
 
-Also 
- [1] "PREFACE"                                                
- [2] "A TALK ABOUT SAINTS" 
- are different than the other sections so we may want to come back
- and handle them. 
-
+Also [1] "PREFACE"\
+[2] "A TALK ABOUT SAINTS" are different than the other sections so we
+may want to come back and handle them.
 
 I'm going to cut down the quakersaints data so that it just contains
-text after the table of contents and list of illustrations. 
+text after the table of contents and list of illustrations.
 
 ```{r}
 quakersaints_trimmed <- quakersaints[290:nrow(quakersaints), ]
 ```
 
 I'll also add a variable to represent the line number in the trimmed
-data. 
-As usual there are many ways to do this, I'll use the base method so
-you see it , but `mutate(id = row_number())` will also work.
+data. As usual there are many ways to do this, I'll use the base method
+so you see it , but `mutate(id = row_number())` will also work.
 
 ```{r}
 quakersaints_trimmed$row_number <- seq.int(nrow(quakersaints_trimmed))
@@ -122,6 +124,7 @@ title_locations <-
   filter(trimws(text) %in% trimws(table_of_contents$text))
 title_locations
 ```
+
 Notice that we lost the younger variable.
 
 Maybe a better way to do this would be to use a join.
@@ -132,15 +135,11 @@ table_of_contents |> left_join(quakersaints_trimmed,
   table_of_contents
 ```
 
+What's the problem now?\
+Go back and look at the text.
 
-
-
-What's the problem now?   
-Go back and look at the text. 
-
-
-We can use this information to say what kind of text each line is. 
-The case_when() function is useful when we have complicated if then/else if/ 
+We can use this information to say what kind of text each line is. The
+case_when() function is useful when we have complicated if then/else if/
 else if .../else situations.
 
 ```{r}
@@ -164,22 +163,19 @@ title_locations <-
 title_locations
 ```
 
-
-
 ```{r}
-
+k
 ```
-So now I know where my stories and epigraphs start and the type of
-text.   But 
-I need to pull this back into the full data set and 
-actually assign all of the lines to their story. 
 
-As always there are a lot of ways to do that, but to keep it simple
-we will use the `fill()` function.
+So now I know where my stories and epigraphs start and the type of text.
+But I need to pull this back into the full data set and actually assign
+all of the lines to their story.
 
-Let's start by creating a variable indicating chapter. Then
-we will fill that using the title.
+As always there are a lot of ways to do that, but to keep it simple we
+will use the `fill()` function.
 
+Let's start by creating a variable indicating chapter. Then we will fill
+that using the title.
 
 ```{r}
 
@@ -194,16 +190,15 @@ quakersaints_trimmed |>
 
 ```
 
-
-In my case
-I suspect the poetic language might be different so I have indicated for each
-line whether it is part of an epigraph or story. 
-I might also suspect that the language differs between the stories that are 
-considered appropriate for younger children.
+In my case I suspect the poetic language might be different so I have
+indicated for each line whether it is part of an epigraph or story. I
+might also suspect that the language differs between the stories that
+are considered appropriate for younger children.
 
 I may also want to eliminate the titles from my analyses.
 
 So now I will tokenize.
+
 ```{r}
 quakersaints_trimmed |> filter(text_type == "Text") |>
   unnest_tokens(word, text, to_lower = TRUE) ->
@@ -211,8 +206,8 @@ quakersaints_trimmed |> filter(text_type == "Text") |>
 
 ```
 
-This time I am going to remove the punctuation and numbers and _then_ remove
-the stop words.
+This time I am going to remove the punctuation and numbers and *then*
+remove the stop words.
 
 ```{r}
 
@@ -223,14 +218,14 @@ quakersaints_long |>
 
 ```
 
-Let's look at the top 20 words in the book as a whole. 
+Let's look at the top 20 words in the book as a whole.
 
 ```{r}
 quakersaints_long |> count(word, sort = TRUE) |> head(20)
 ```
 
-Looking these over, what should I drop?  How could I have done this 
-earlier? 
+Looking these over, what should I drop? How could I have done this
+earlier?
 
 ```{r}
 quakersaints_long <- quakersaints_long |> filter (is.na(word) == FALSE)
@@ -275,9 +270,6 @@ ggplot(qs_props_younger, aes(x = `TRUE`, y = `FALSE`,
   labs(x = "Younger", y = "Older", title = "Word Distributions")
 ```
 
-
-
-
 ```{r }
 quakersaints_long |> group_by(title) |> count(word, sort = TRUE) |>
   slice_head(n = 10) |> 
@@ -291,8 +283,9 @@ quakersaints_long |> group_by(title) |> count(word, sort = TRUE) |>
     size = 12, color = "dark green"))
   
 ```
-This is really smushed so I want to split it up and use a smaller 
-font.
+
+This is really smushed so I want to split it up and use a smaller font.
+
 ```{r }
 quakersaints_long |> group_by(title) |> count(word, sort = TRUE) |>
   slice_head(n = 10) |>
@@ -319,16 +312,15 @@ quakersaints_long |> group_by(title) |> count(word, sort = TRUE) |>
   
 ```
 
+We could do this multiple times by copy and pasting and modifying the
+list of numbers.
 
-We could do this multiple times by copy and pasting and modifying 
-the list of numbers. 
+This is not the best option because all that copy and pasting introduces
+the potential for errors. Also if we make changes, we will do it in one
+place.
 
-This is not the best option because all that copy and pasting 
-introduces the potential for errors. Also if we make changes, we will
-do it in one place.
-
-One solution, make a function.  In this case it will be a very
-specific function, not like one for use in other situations.
+One solution, make a function. In this case it will be a very specific
+function, not like one for use in other situations.
 
 ```{r }
 # Chapters is a vector of the chapters to be graphed.
@@ -344,6 +336,7 @@ make_faceted_title <- function(chapters ){
 }
   
 ```
+
 ```{r}
 make_faceted_title(chapters = c(16, 18, 20, 22, 24, 26))
 make_faceted_title(seq(from = 28, to = 38, by = 2))
@@ -351,24 +344,26 @@ make_faceted_title(seq(from = 40, to = 52, by = 2))
 make_faceted_title(seq(from = 54, to = 64, by = 2))
 make_faceted_title(seq(from = 66, to = 68, by = 2))
 ```
-We could also make the function even more general by doing things
-like passing in the grouping variable and the name of the preprocessed
-data set.  We could even extract the grouping variable from the
-preprocessed data set.
+
+We could also make the function even more general by doing things like
+passing in the grouping variable and the name of the preprocessed data
+set. We could even extract the grouping variable from the preprocessed
+data set.
 
 ```{r}
 preprocessed |> group_by(title) |>
 group_vars()
 ```
 
-In class/at home: Clean up the document (get rid of unneeded code, make it flow
-more smoothly), consider creating a function to reduce repetitive code, and
-edit the text to reflect what you did. 
+In class/at home: Clean up the document (get rid of unneeded code, make
+it flow more smoothly), consider creating a function to reduce
+repetitive code, and edit the text to reflect what you did.
 
-Also do the same kind of data wrangling and more focused analysis on your data. 
+Also do the same kind of data wrangling and more focused analysis on
+your data.
 
-I am going to save my trimmed data, simply to maintain consistency at this
-point. 
+I am going to save my trimmed data, simply to maintain consistency at
+this point.
 
 ```{r}
 save(quakersaints_trimmed, file = "data/quakersaints_trimmed.rda")
@@ -376,8 +371,25 @@ save(quakersaints_long, file = "data/quakersaints_long.rda")
 
 ```
 
+# My chunk
+
+```{r eval = FALSE}
+#getting book file
+
+thegrey <-  gutenberg_download(c(6746))
+save(thegrey, file="thegrey.rda")
+```
 
 ```{r}
 
+#filter out Table of contents
+thegrey_table_of_contents <- thegrey[30:64,] 
+# Remove blank lines
+thegrey_table_of_contents <- thegrey_table_of_contents |> filter(text != "")
+thegrey_table_of_contents$text
 ```
 
+```{r}
+# trimmed data so we start from the first Chapter
+thegrey_trimmed <- thegrey[70:nrow(thegrey), ]
+```
