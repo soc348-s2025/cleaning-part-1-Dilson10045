@@ -20,10 +20,7 @@ library(ggforce)
 library(forcats)
 ```
 
-I am marking this as do not eval so it doesn't redownload each time. I
-can save a working copy of the data and use that when experimenting,
-though still with the ability to run the whole process. To load the
-saved dataset I can use the `load()` function.
+
 
 ```{r eval = FALSE}
 

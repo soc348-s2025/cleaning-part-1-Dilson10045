@@ -11,7 +11,7 @@ library(dplyr)
 library(stringr)
 library(ggplot2)
 library(scales)
-library(ggforce)
+#library(ggforce)
 library(forcats)
 ```
 
@@ -22,9 +22,7 @@ process. To load the saved dataset I can use the `load()` function.
 
 ```{r eval = FALSE}
 
-thegrey <-  gutenberg_download(c(6746))
-save(thegrey, file="thegrey.rda")
-```
+
 
 ```{r eval=FALSE}
 load("thegrey.rda")
