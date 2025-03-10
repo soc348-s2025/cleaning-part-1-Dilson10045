@@ -1,0 +1,56 @@
+---
+title: "First Steps the grey"
+output: html_document
+---
+
+```{r}
+library(gutenbergr)
+library(tidytext)
+library(janeaustenr)
+library(tidyr)
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(scales)
+```
+
+
+```{r eval = FALSE}
+thegrey <-  gutenberg_download(c(6746))
+save(thegrey, file="thegrey.rda")
+```
+
+```{r}
+# break down the dataset and create column tokens
+
+tidy_thegrey <- thegrey |> 
+  unnest_tokens(word, text)
+```
+
+
+
+```{r}
+# track where every words come from 
+
+tidy_thegrey <- thegrey |> 
+  mutate(row = row_number()) |>
+  unnest_tokens(word, text) 
+```
+
+```{r}
+# Find the most common words
+
+tidy_thegrey |>  count(word, sort = TRUE)
+```
+```{r}
+ #Remove all common words from the 3 lexicons
+tidy_thegrey <- thegrey |>
+   mutate(row = row_number()) |>
+  unnest_tokens(word, text) |>
+  anti_join(stop_words)
+```
+
+```{r}
+# recount words
+tidy_quakersaints |>  count(word, sort = TRUE) 
+```
