@@ -34,7 +34,7 @@ tidy_thegrey <- thegrey |>
 
 tidy_thegrey <- thegrey |> 
   mutate(row = row_number()) |>
-  unnest_tokens(word, text) 
+  unnest_tokens(word, text)  
 ```
 
 ```{r}
