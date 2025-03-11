@@ -6,7 +6,6 @@ editor_options:
     wrap: 72
 ---
 
-# All of my work will be below these instructions
 
 ```{r}
 library(gutenbergr)
@@ -23,14 +22,12 @@ library(forcats)
 
 
 ```{r eval = FALSE}
-
-
-thegrey <-  gutenberg_download(c(6746))
-save(thegrey, file="thegrey.rda")
+quakersaints <-  gutenberg_download(c(19605))
+save(quakersaints, file="quakersaints.rda")
 ```
 
 ```{r eval=FALSE}
-load("thegrey.rda")
+load("quakersaints.rda")
 ```
 
 Previously, we dove straight into tokenizing. But this time let's first
@@ -160,10 +157,6 @@ title_locations <-
 title_locations
 ```
 
-```{r}
-k
-```
-
 So now I know where my stories and epigraphs start and the type of text.
 But I need to pull this back into the full data set and actually assign
 all of the lines to their story.
@@ -175,7 +168,6 @@ Let's start by creating a variable indicating chapter. Then we will fill
 that using the title.
 
 ```{r}
-
 quakersaints_trimmed |> 
   left_join(title_locations, by = c("row_number", "gutenberg_id")) |>
   # We get text.y and text.x because text is in both data frames,
@@ -184,7 +176,6 @@ quakersaints_trimmed |>
   mutate(text_type = case_when(is.na(text_type) ~ "Text",
                                TRUE ~ text_type)) |>
   fill(title) |> fill(section_type) |> fill(younger) -> quakersaints_trimmed
-
 ```
 
 In my case I suspect the poetic language might be different so I have
@@ -366,27 +357,4 @@ this point.
 save(quakersaints_trimmed, file = "data/quakersaints_trimmed.rda")
 save(quakersaints_long, file = "data/quakersaints_long.rda")
 
-```
-
-# My chunk
-
-```{r eval = FALSE}
-#getting book file
-
-thegrey <-  gutenberg_download(c(6746))
-save(thegrey, file="thegrey.rda")
-```
-
-```{r}
-
-#filter out Table of contents
-thegrey_table_of_contents <- thegrey[30:64,] 
-# Remove blank lines
-thegrey_table_of_contents <- thegrey_table_of_contents |> filter(text != "")
-thegrey_table_of_contents$text
-```
-
-```{r}
-# trimmed data so we start from the first Chapter
-thegrey_trimmed <- thegrey[70:nrow(thegrey), ]
 ```

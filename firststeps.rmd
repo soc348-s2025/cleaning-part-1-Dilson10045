@@ -85,5 +85,5 @@ tidy_quakersaints |>  count(word, sort = TRUE)
 How does this list of the most frequent words differ from the first one?
 
 ```         
-This list differs from the first one because now we dont have all the common words from the 3 Lexicons which are Smart, Snowball, and onix. So if we go back to our tidy_quakersaints data set,  we wont see  common words such as a, able, around, be, you're , he's and so on on our token columns.
+This list differs from the first one because now we dont have all the common words from the 3 Lexicons which are Smart, Snowball, and onix. So if we go back to our tidy_quakersaints data set,  we wont see common words such as a, able, around, be, you're , he's and so on, on our token columns. 
 ```
