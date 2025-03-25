@@ -1,0 +1,16 @@
+---
+title: "export"
+output: html_document
+date: "2025-03-25"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+write.csv(thegrey_long, "thegrey_long.csv", row.names = FALSE)
+```
+```{r}
+write.csv(thegrey_trimmed, "thegrey_trimmed.csv", row.names = FALSE)
+```
